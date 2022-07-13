@@ -30,3 +30,10 @@ Existen diferentes formas de abordar este escenario y cada uno con sus pros y su
 4. Explica las ventajas de cargar en tu sitio las librerías de terceros por GTM.
 
    * En esta pregunta voy a ser sincero, nunca he usado GTM para gestión de librerías de terceros. Intenté consultarlo en Google para ponerme al día con el funcionamiento pero no encontré nada referente a GTM.
+
+## Ejercicio Técnico
+
+Para ejecutar el validador podemos hacerlo de dos formas diferentes:
+
+1. ejecutar el comando ```go run main.go``` en la raíz del proyecto. Por defecto tiene una mano predefinida la cual validará.
+2. se pueden correr los tests con el comando ```go test -v -cover``` y se ejecutarán los tests para las manos predefinidas.
