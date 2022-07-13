@@ -1,4 +1,4 @@
-# Examen Técnico Dafiti
+# Examen Técnico Dafiti Alejandro Castañeda
 
 A continuación se resuelven los puntos del examen técnico de Dafiti para el puesto de Backend Developer.
 
@@ -37,3 +37,91 @@ Para ejecutar el validador podemos hacerlo de dos formas diferentes:
 
 1. ejecutar el comando ```go run main.go``` en la raíz del proyecto. Por defecto tiene una mano predefinida la cual validará.
 2. se pueden correr los tests con el comando ```go test -v -cover``` y se ejecutarán los tests para las manos predefinidas.
+
+
+## MySQL
+
+A continuación se resuelve el apartado de preguntas ***SQL***.
+
+* ¿Cuál es el jugador más viejo de cada equipo?
+
+```sql
+select
+    e.nombre as equipo,
+    (
+        select
+        j.nombre
+        from jugadores j
+        where j.fk_equipos = e.id_equipos
+        order by j.fecha_nacimiento desc
+        limit 1
+    ) as "jugador más viejo"
+from equipos e;
+```
+
+* ¿Cuántos partidos jugó de visitante cada equipo? (nota: hay equipos no jugaron ningún partido)
+
+```sql
+select
+    e.id_equipos,
+    e.nombre as equipo,
+    count(p.id_partidos) as "partidos jugados cómo visitante"
+from equipos e
+left join partidos p on e.id_equipos = p.fk_equipo_visitante
+group by e.id_equipos, e.nombre;
+```
+
+* ¿Qué equipos jugaron el 01/01/2016 y el 12/02/2016?
+
+```sql
+select
+    e.*
+from equipos e
+where e.id_equipos in
+    (
+        select
+            p.fk_equipo_local
+        from partidos p
+        where DATE(p.fecha_partido) = STR_TO_DATE("01/01/2016", '%d/%m/%Y') or DATE(p.fecha_partido) = STR_TO_DATE("12/02/2016", '%d/%m/%Y')
+        group by p.fk_equipo_local
+    )
+and e.id_equipos in
+    (
+        select
+        p.fk_equipo_visitante
+        from partidos p
+        where DATE(p.fecha_partido) = STR_TO_DATE("01/01/2016", '%d/%m/%Y') or DATE(p.fecha_partido) = STR_TO_DATE("12/02/2016", '%d/%m/%Y')
+        group by p.fk_equipo_visitante
+);
+```
+
+* Diga el total de goles que hizo el equipo “Chacarita” en su historia (como local o visitante)
+
+```sql
+select
+    e.id_equipos,
+    e.nombre,
+    (
+        select
+        sum(p.goles_local)
+        from partidos p
+        where p.fk_equipo_local = e.id_equipos
+        group by p.fk_equipo_local
+    )
+    +
+    (
+        select
+        sum(p.goles_visitante)
+        from partidos p
+        where p.fk_equipo_visitante = e.id_equipos
+        group by p.fk_equipo_visitante
+    ) as " total goles"
+from equipos e
+where nombre = "Chacarita";
+```
+
+## Extra
+
+Cuéntanos en pocas líneas cuál crees que es la mayor innovación en el mundo del desarrollo en los últimos 5 años, y por qué.
+
+* Para mi, el paradigma de la computación sin servidor (Serverless Computing) como enfoque arquitectónico se ha vuelto muy popular en los últimos años. Hoy es uno de los modelos de servicios en la nube de más rápido crecimiento para el desarrollo de software, modelos que continúan dominando la industria. Esto se debe a que permite el desarrollo rápido de aplicaciones sin el dolor de cabeza de la administración del servidor, y las operaciones se pueden escalar fácilmente.
